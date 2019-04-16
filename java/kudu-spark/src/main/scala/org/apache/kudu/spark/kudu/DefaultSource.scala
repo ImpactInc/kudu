@@ -253,7 +253,12 @@ class KuduRelation(
     extends BaseRelation with PrunedFilteredScan with InsertableRelation {
 
   private val context: KuduContext =
-    new KuduContext(masterAddrs, sqlContext.sparkContext, readOptions.socketReadTimeoutMs)
+    new KuduContext(
+      masterAddrs,
+      sqlContext.sparkContext,
+      readOptions.socketReadTimeoutMs,
+      None,
+      None)
 
   private val table: KuduTable = context.syncClient.openTable(tableName)
 
@@ -466,7 +471,12 @@ class KuduSink(
     extends Sink {
 
   private val context: KuduContext =
-    new KuduContext(masterAddrs, sqlContext.sparkContext, readOptions.socketReadTimeoutMs)
+    new KuduContext(
+      masterAddrs,
+      sqlContext.sparkContext,
+      readOptions.socketReadTimeoutMs,
+      None,
+      None)
 
   override def addBatch(batchId: Long, data: DataFrame): Unit = {
     context.writeRows(data, tableName, operationType, writeOptions)

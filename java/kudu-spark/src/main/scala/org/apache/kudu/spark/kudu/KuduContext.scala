@@ -60,11 +60,16 @@ import org.apache.kudu.Type
  */
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
-class KuduContext(val kuduMaster: String, sc: SparkContext, val socketReadTimeoutMs: Option[Long])
+class KuduContext(
+    val kuduMaster: String,
+    sc: SparkContext,
+    val socketReadTimeoutMs: Option[Long],
+    val operationTimeoutMs: Option[Long],
+    val adminOperationTimeoutMs: Option[Long])
     extends Serializable {
   val log: Logger = LoggerFactory.getLogger(getClass)
 
-  def this(kuduMaster: String, sc: SparkContext) = this(kuduMaster, sc, None)
+  def this(kuduMaster: String, sc: SparkContext) = this(kuduMaster, sc, None, None, None)
 
   /**
    * A collection of accumulator metrics describing the usage of a KuduContext.
@@ -133,7 +138,8 @@ class KuduContext(val kuduMaster: String, sc: SparkContext, val socketReadTimeou
   @transient lazy val syncClient: KuduClient = asyncClient.syncClient()
 
   @transient lazy val asyncClient: AsyncKuduClient = {
-    val c = KuduClientCache.getAsyncClient(kuduMaster, socketReadTimeoutMs)
+    val c = KuduClientCache
+      .getAsyncClient(kuduMaster, socketReadTimeoutMs, operationTimeoutMs, adminOperationTimeoutMs)
     if (authnCredentials != null) {
       c.importAuthenticationCredentials(authnCredentials)
     }
@@ -487,7 +493,11 @@ private object KuduContext {
 private object KuduClientCache {
   val Log: Logger = LoggerFactory.getLogger(KuduClientCache.getClass)
 
-  private case class CacheKey(kuduMaster: String, socketReadTimeoutMs: Option[Long])
+  private case class CacheKey(
+      kuduMaster: String,
+      socketReadTimeoutMs: Option[Long],
+      operationTimeoutMs: Option[Long],
+      adminOperationTimeoutMs: Option[Long])
   private case class CacheValue(kuduClient: AsyncKuduClient, shutdownHookHandle: Runnable)
 
   /**
@@ -518,13 +528,26 @@ private object KuduClientCache {
     clientCache.clear()
   }
 
-  def getAsyncClient(kuduMaster: String, socketReadTimeoutMs: Option[Long]): AsyncKuduClient = {
-    val cacheKey = CacheKey(kuduMaster, socketReadTimeoutMs)
+  def getAsyncClient(
+      kuduMaster: String,
+      socketReadTimeoutMs: Option[Long],
+      operationTimeoutMs: Option[Long],
+      adminOperationTimeoutMs: Option[Long]): AsyncKuduClient = {
+    val cacheKey =
+      CacheKey(kuduMaster, socketReadTimeoutMs, operationTimeoutMs, adminOperationTimeoutMs)
     clientCache.synchronized {
       if (!clientCache.contains(cacheKey)) {
         val builder = new AsyncKuduClient.AsyncKuduClientBuilder(kuduMaster)
         socketReadTimeoutMs match {
           case Some(timeout) => builder.defaultSocketReadTimeoutMs(timeout)
+          case None =>
+        }
+        operationTimeoutMs match {
+          case Some(timeout) => builder.defaultOperationTimeoutMs(timeout)
+          case None =>
+        }
+        adminOperationTimeoutMs match {
+          case Some(timeout) => builder.defaultAdminOperationTimeoutMs(timeout)
           case None =>
         }
 
