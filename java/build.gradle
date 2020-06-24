@@ -25,6 +25,7 @@ import org.apache.kudu.gradle.DistTestTask
 // Plugins and scripts applied at the root level only, instead of per module.
 apply plugin: "idea"
 apply plugin: "eclipse"
+apply plugin: "maven-publish"
 apply from: "$rootDir/gradle/properties.gradle"
 apply from: "$rootDir/gradle/dependencies.gradle"
 apply from: "$rootDir/gradle/wrapper.gradle"
@@ -93,6 +94,23 @@ task distTest(type: DistTestTask, dependsOn: copyDistTestJars) {
   subprojects.each {
     it.tasks.withType(Test).each {
       addTestTask it
+    }
+  }
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+    }
+  }
+  repositories {
+    maven {
+      url property("nexusThirdPartyUrl")
+      credentials {
+        username property("nexusUsername")
+        password property("nexusPassword")
+      }
     }
   }
 }
