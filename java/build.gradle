@@ -25,6 +25,7 @@ import org.apache.kudu.gradle.DistTestTask
 // Plugins and scripts applied at the root level only, instead of per module.
 apply plugin: "idea"
 apply plugin: "eclipse"
+apply plugin: "java"
 apply plugin: "maven-publish"
 apply from: "$rootDir/gradle/properties.gradle"
 apply from: "$rootDir/gradle/dependencies.gradle"
