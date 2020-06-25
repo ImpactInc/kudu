@@ -31,7 +31,11 @@ apply from: "$rootDir/gradle/properties.gradle"
 apply from: "$rootDir/gradle/dependencies.gradle"
 apply from: "$rootDir/gradle/wrapper.gradle"
 
-group = "com.ir"
+group = "com.impact"
+def buildNumber = System.getenv("BUILD_NUMBER") ?: System.getProperty("BUILD_NUMBER")
+def prefix = "alpaqa-"
+project.version = prefix + buildNumber
+System.setProperty("version", project.version)
 
 allprojects {
   // These are common to all projects, including this
@@ -41,9 +45,6 @@ allprojects {
     mavenCentral()
     mavenLocal()
   }
-
-  // Read the version.txt file to set the project version
-  project.version = file("$rootDir/../version.txt").text.trim()
 
   apply from: "$rootDir/gradle/docs.gradle"
 }
@@ -110,7 +111,7 @@ publishing {
   }
   repositories {
     maven {
-      url property("nexusThirdPartyUrl")
+      url property("nexusReleasesUrl")
       credentials {
         username property("nexusUsername")
         password property("nexusPassword")
