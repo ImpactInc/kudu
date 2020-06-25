@@ -41,7 +41,7 @@ allprojects {
   // These are common to all projects, including this
   // top level parent project.
   repositories {
-    maven { url property("nexusThirdPartyUrl") }
+    maven { url property("nexusReleasesUrl") }
     mavenCentral()
     mavenLocal()
   }
