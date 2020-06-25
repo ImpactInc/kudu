@@ -438,6 +438,12 @@ on writing code, though it may affect your ability to build from within Eclipse.
 1. https://cmake.org/pipermail/cmake-developers/2011-November/014153.html
 2. http://public.kitware.com/Bug/view.php?id=15102
 
+## Publishing
+There is a Jenkins job to publish shc jar to nexus thirdparty url. To publish a kudu jar, simply go to the alpaqa-publish-kudu job, click release and input the branch you want to release from and a custom version number if applicable.
+
+[Job Link](https://data-jenkins-ci.gcp.inf-impact.net/view/Scoring/job/alpaqa-publish-kudu/)
+
+
 == Export Control Notice
 
 This distribution uses cryptographic software and may be subject to export controls.
