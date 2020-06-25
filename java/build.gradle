@@ -31,12 +31,13 @@ apply from: "$rootDir/gradle/properties.gradle"
 apply from: "$rootDir/gradle/dependencies.gradle"
 apply from: "$rootDir/gradle/wrapper.gradle"
 
-group = "ir.fq"
+group = "com.ir"
 
 allprojects {
   // These are common to all projects, including this
   // top level parent project.
   repositories {
+    maven { url property("nexusThirdPartyUrl") }
     mavenCentral()
     mavenLocal()
   }
