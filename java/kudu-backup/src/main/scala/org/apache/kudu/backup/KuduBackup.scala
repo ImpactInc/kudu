@@ -48,8 +48,9 @@ object KuduBackup {
         // "Invalid call sequence ID" errors can occur under heavy load.
         Some(options.scanRequestTimeoutMs),
         None,
-        None)
+        None
       )
+
     val path = options.path
     log.info(s"Backing up to path: $path")
 

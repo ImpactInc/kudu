@@ -18,7 +18,7 @@
 // This file contains the configuration of the project hierarchy.
 // Mainly we just define what subprojects are in the build.
 
-rootProject.name = "kudu-spark2_2.11-1.9.1"
+rootProject.name = "kudu-parent"
 include "kudu-backup"
 include "kudu-client"
 include "kudu-client-tools"
