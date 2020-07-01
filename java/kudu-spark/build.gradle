@@ -15,10 +15,19 @@
 // specific language governing permissions and limitations
 // under the License.
 
+apply plugin: "java"
+apply plugin: "maven-publish"
 apply plugin: "scala"
 apply from: "$rootDir/gradle/shadow.gradle"
 
+// Use Impact package group/version
+group = "com.impact"
+def buildNumber = System.getenv("BUILD_NUMBER") ?: System.getProperty("BUILD_NUMBER")
+def versionPrefix = "alpaqa-"
+version = versionPrefix + buildNumber
+
 dependencies {
+
   compile project(path: ":kudu-client", configuration: "shadow")
   compile libs.hdrhistogram
   // TODO(KUDU-2500): Spark uses reflection which requires the annotations at runtime.
@@ -29,11 +38,25 @@ dependencies {
   provided libs.sparkSql
   provided libs.slf4jApi
 
-
   testCompile project(path: ":kudu-test-utils", configuration: "shadow")
   testCompile libs.junit
   testCompile libs.scalatest
 }
 
-// Adjust the artifact name to include the spark and scala base versions.
-archivesBaseName = "kudu-spark${versions.sparkBase}_${versions.scalaBase}"
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      artifactId = "kudu-spark2_2.11-1.9.1"
+      artifact shadowJar
+    }
+  }
+  repositories {
+    maven {
+      url property("nexusReleasesUrl")
+      credentials {
+        username property("nexusUsername")
+        password property("nexusPassword")
+      }
+    }
+  }
+}
