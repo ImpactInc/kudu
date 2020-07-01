@@ -46,13 +46,10 @@ dependencies {
 
 compileJava.finalizedBy assemble
 
-println("project name " + project.name)
-println("project ver " + project.version)
-
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      artifact(file("$buildDir/libs/kudu-spark-${project.version}.jar"))
+      artifact shadowJar
     }
   }
   repositories {
