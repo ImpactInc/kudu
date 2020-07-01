@@ -24,8 +24,7 @@ apply from: "$rootDir/gradle/shadow.gradle"
 group = "com.impact"
 def buildNumber = System.getenv("BUILD_NUMBER") ?: System.getProperty("BUILD_NUMBER")
 def versionPrefix = "alpaqa-"
-project.version = versionPrefix + buildNumber
-System.setProperty("version", project.version)
+version = versionPrefix + buildNumber
 
 dependencies {
 
@@ -44,11 +43,10 @@ dependencies {
   testCompile libs.scalatest
 }
 
-compileJava.finalizedBy assemble
-
 publishing {
   publications {
     mavenJava(MavenPublication) {
+      artifactId = "kudu-spark2_2.11-1.9.1"
       artifact shadowJar
     }
   }
