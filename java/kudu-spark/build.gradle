@@ -46,6 +46,9 @@ dependencies {
 
 compileJava.finalizedBy assemble
 
+println("project name " + project.name)
+println("project ver " + project.version)
+
 publishing {
   publications {
     mavenJava(MavenPublication) {
