@@ -52,7 +52,7 @@ println("project ver " + project.version)
 publishing {
   publications {
     mavenJava(MavenPublication) {
-      artifact(file("$buildDir/libs/kudu-spark2_2.11-${project.version}.jar"))
+      artifact(file("$buildDir/libs/kudu-spark-${project.version}.jar"))
     }
   }
   repositories {
